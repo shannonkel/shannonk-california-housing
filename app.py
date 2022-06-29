@@ -2,6 +2,7 @@ import dash
 from dash import dcc,html
 from dash.dependencies import Input, Output, State
 import pickle
+from sklearn.neighbors import KNeighborsRegressor
 import numpy as np
 
 ########### Define your variables ######
@@ -22,6 +23,7 @@ with open('analysis/model_components/std_scaler.pkl', 'rb') as f:
     std_scaler=pickle.load(f)
 with open('analysis/model_components/lin_reg.pkl', 'rb') as f:
     lin_reg=pickle.load(f)
+
 
 ########### Initiate the app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -78,7 +80,7 @@ app.layout = html.Div(children=[
                     html.H6('Median Home Value (Predicted):'),
                     html.Button(children='Submit', id='submit-val', n_clicks=0,
                                     style={
-                                    'background-color': 'red',
+                                    'background-color': 'blue',
                                     'color': 'white',
                                     'margin-left': '5px',
                                     'verticalAlign': 'center',
@@ -143,7 +145,6 @@ def make_prediction(clicks, longitude, latitude, housing_median_age, total_rooms
 
         # standardization
         std_inputs = std_scaler.transform(inputs)
-
         y = lin_reg.predict(std_inputs)
         formatted_y = "${:,.2f}".format(y[0])
         return formatted_y
